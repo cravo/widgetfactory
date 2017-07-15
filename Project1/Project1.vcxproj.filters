@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\allegro.js" />
+    <None Include="..\gui.js" />
+    <None Include="..\index.html" />
+    <None Include="..\LICENSE.md" />
+    <None Include="..\metalworks.js" />
+    <None Include="..\README.md" />
+    <None Include="..\style.css" />
+  </ItemGroup>
+</Project>

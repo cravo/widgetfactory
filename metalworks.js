@@ -62,7 +62,7 @@ var playTime = 0;
 var clickData = { Total: 0, Level: 1 };
 var muted = false;
 var iconFont;
-var resetCounter = 0;
+var resetCounter = 5;
 var clickerUpgradeLevel = 0;
 var helpText = "You should probably click something.";
 var helpText2 = "";
@@ -223,6 +223,34 @@ function getPlayTimeString()
     }
 }
 
+function drawReset()
+{
+    var x = 10 + (SCREEN_W / 4) + 10 + (SCREEN_W / 4) + 10;
+    var w = SCREEN_W - 10 - x;
+
+    GUI_SetRegion(x, 80, w, 50);
+    GUI_Window("Pension Plan");
+
+    var result = GUI_Button("Retire Now");
+
+    if (result != gui_result.None)
+    {
+        helpText = "WARNING! Resets all progress!";
+        helpText2 = "Click " + resetCounter + " times to do this.";
+    }
+
+    if (result == gui_result.Click)
+    {
+        playSound("click");
+
+        resetCounter -= 1;
+        if (resetCounter == 0)
+        {
+            resetAll();
+        }
+    }
+}
+
 function drawAchievements()
 {
     var x = 10 + (SCREEN_W / 4) + 10 + (SCREEN_W / 4) + 10;
@@ -284,20 +312,20 @@ function doClick()
 
 function drawMute()
 {
-    rect(canvas, 30 - 8, 24 - 16, 32, 32, makecol(255, 255, 0));
+    rect(canvas, 10, 8, 32, 32, makecol(255, 255, 0));
 
     if (!muted)
     {
-        textout_centre(canvas, iconFont, String.fromCharCode(0xE050), 30 - 8 + 16, 24 - 16 + 28, 24, makecol(255, 255, 0));
+        textout_centre(canvas, iconFont, String.fromCharCode(0xE050), 26, 8 + 28, 24, makecol(255, 255, 0));
     }
     else
     {
-        textout_centre(canvas, iconFont, String.fromCharCode(0xE04F), 30 - 8 + 16, 24 - 16 + 28, 24, makecol(255, 255, 0));
+        textout_centre(canvas, iconFont, String.fromCharCode(0xE04F), 26, 8 + 28, 24, makecol(255, 255, 0));
     }
 
     if (mouse_pressed)
     {
-        if (isMouseOver(30 - 8, 24 - 16, 32, 32))
+        if (isMouseOver(10, 8, 32, 32))
         {
             muted = !muted;
         }
@@ -542,6 +570,7 @@ function draw()
     drawItems();
     drawUpgrades();
     drawAchievements();
+    drawReset();
     drawHelp();
 }
 
@@ -596,27 +625,24 @@ function loadAchievements()
 
 function save()
 {
-    return;
-
     if (localStorageAvailable())
     {
-        localStorage.setObj("version", version);
-        localStorage.setObj("cash", cash);
-        localStorage.setObj("cashAllTime", cashAllTime);
-        localStorage.setObj("prestigeLevel", prestigeLevel);
-        localStorage.setObj("playTime", playTime);
+        localStorage.setObj("wf_version", version);
+        localStorage.setObj("wf_cash", cash);
+        localStorage.setObj("wf_cashAllTime", cashAllTime);
+        localStorage.setObj("wf_prestige", prestige);
+        localStorage.setObj("wf_playTime", playTime);
         saveAchievements();
-        localStorage.setObj("clickData", clickData);
+        localStorage.setObj("wf_clickData", clickData);
+        localStorage.setObj("wf_items", items);
     }
 }
 
 function load()
 {
-    return;
-
     if (localStorageAvailable())
     {
-        var v = localStorage.getObj("version");
+        var v = localStorage.getObj("wf_version");
 
         if (v == null)
         {
@@ -624,12 +650,13 @@ function load()
         }
         else
         {
-            cash = localStorage.getObj("cash");
-            cashAllTime = localStorage.getObj("cashAllTime");
-            prestigeLevel = localStorage.getObj("prestigeLevel");
-            playTime = localStorage.getObj("playTime");
+            cash = localStorage.getObj("wf_cash");
+            cashAllTime = localStorage.getObj("wf_cashAllTime");
+            prestige = localStorage.getObj("wf_prestige");
+            playTime = localStorage.getObj("wf_playTime");
             loadAchievements();
-            clickData = localStorage.getObj("clickData");
+            clickData = localStorage.getObj("wf_clickData");
+            items = localStorage.getObj("wf_items");
         }
 
     }
@@ -713,6 +740,7 @@ function resetAll()
     cashAllTime = cash;
     prestige.Level = 1;
     playTime = 0;
+    resetCounter = 5;
 }
 
 function loadSounds()
